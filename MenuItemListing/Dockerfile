@@ -1,22 +1,22 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 FROM mcr.microsoft.com/dotnet/aspnet:3.1 AS base
-WORKDIR /src
+WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
-COPY ["MenuItemListing/MenuItemListing.csproj", "MenuItemListing/"]
-RUN dotnet restore "MenuItemListing/MenuItemListing.csproj"
+COPY ["Menuitem/Menuitem.csproj", "Menuitem/"]
+RUN dotnet restore "Menuitem/Menuitem.csproj"
 COPY . .
-WORKDIR "/src/MenuItemListing"
-RUN dotnet build "MenuItemListing.csproj" -c Release -o /app/build
+WORKDIR "/src/Menuitem"
+RUN dotnet build "Menuitem.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "MenuItemListing.csproj" -c Release -o /app/publish
+RUN dotnet publish "Menuitem.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
-COPY --chown=node:node ./
-ENTRYPOINT ["dotnet", "MenuItemListing.dll"]
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "Menuitem.dll"]
