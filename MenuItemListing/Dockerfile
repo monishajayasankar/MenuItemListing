@@ -18,5 +18,5 @@ RUN dotnet publish "MenuItemListing.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
-COPY --from=build /app/outdir.
+COPY --from=publish /app/publish.
 ENTRYPOINT ["dotnet", "MenuItemListing.dll"]
